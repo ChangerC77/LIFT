@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=lift
+Comment=lift script
+Exec=gnome-terminal -- bash -c "/home/arx/ARX_SDK/LIFT_ALL_IN_ONE_SDK/00-sh/ROS2/remote_LIFT.sh; exec bash"
+Icon=utilities-terminal
+Terminal=true
+Type=Application
+Categories=Utility;
+
