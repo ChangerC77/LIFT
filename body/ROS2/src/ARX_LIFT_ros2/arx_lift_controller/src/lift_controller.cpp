@@ -1,7 +1,3 @@
-//
-// Created by nuc-ros2 on 24-12-6.
-//
-
 #include <rclcpp/rclcpp.hpp>
 #include <arx_lift_src/lift_head_control_loop.h>
 #include <arm_control/msg/pos_cmd.hpp>
@@ -32,14 +28,14 @@ int main(int argc, char **argv) {
                                                                    control_loop->setHeadYaw(msg.head_yaw);
                                                                    control_loop->setHeadPitch(-msg.head_pit);
                                                                    if (robot_type == 0)
-                                                                     control_loop->setChassisCmd(msg.chx * 0.36 /1.5,
-                                                                                                 -msg.chy * 0.65 /3,
-                                                                                                 msg.chz * 1.8 /2,
+                                                                     control_loop->setChassisCmd(msg.chx * 1/2.5,
+                                                                                                 -msg.chy * 1/2.5,
+                                                                                                 msg.chz * 1/2.5,
                                                                                                  msg.mode1);
                                                                    else
-                                                                     control_loop->setChassisCmd(msg.chx * 2 /2,
-                                                                                                 -msg.chy * 2/2,
-                                                                                                 msg.chz * 4 /2,
+                                                                     control_loop->setChassisCmd(msg.chx * 1/5,
+                                                                                                 -msg.chy * 1/5,
+                                                                                                 msg.chz * 1/5,
                                                                                                  msg.mode1);
 
                                                                  });
