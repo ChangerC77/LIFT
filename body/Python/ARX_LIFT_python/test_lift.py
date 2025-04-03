@@ -3,7 +3,7 @@ import arx_lift_python as arx
 import time
 import pygame
 
-control_loop = arx.LiftHeadControlLoop("can5")
+control_loop = arx.LiftHeadControlLoop("can5",arx.RobotType.X7S)
 pygame.init()
 pygame.joystick.init()
 joystick = pygame.joystick.Joystick(0)
