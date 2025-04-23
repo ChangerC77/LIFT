@@ -47,6 +47,7 @@ namespace arx::r5
         bool pub_topic_v1_ = false;
         bool pub_topic_v2_ = false;
         std::shared_ptr<InterfacesThread> interfaces_ptr_;
+        std::string can_name_;
 
         ros::Publisher joint_state_publisher_;
         ros::Subscriber joint_state_subscriber_;
