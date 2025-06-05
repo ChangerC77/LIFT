@@ -17,7 +17,7 @@ gnome-terminal -t "body" -x  bash -c "cd ${workspace}; cd ../../..; cd body/ROS;
 sleep 3
 gnome-terminal -t "L" -x  bash -c "cd ${workspace}; cd ../../..; cd R5/ROS/R5_ws; source devel/setup.bash && roslaunch arx_r5_controller open_vr_double_arm.launch; exec bash;"
 
-# gnome-terminal -t "pub" -x bash -c "source ~/.bashrc;rosrun joy joy_node;exec bash;"
+
 #VR
 gnome-terminal -t "unity_tcp" -x  bash -c "cd ${workspace}; cd ../../..; cd ARX_VR_SDK/ROS; source devel/setup.bash && rosrun serial_port serial_port;exec bash;"
 sleep 0.1
