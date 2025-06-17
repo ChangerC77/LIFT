@@ -3,9 +3,11 @@
 //
 
 #include <rclcpp/rclcpp.hpp>
+#include <tf2/LinearMath/Quaternion.h>
 #include <arx_lift_src/lift_head_control_loop.h>
 #include <arm_control/msg/pos_cmd.hpp>
 #include <sensor_msgs/msg/joy.hpp>
+#include <sensor_msgs/msg/imu.hpp>
 #include <csignal>
 
 std::shared_ptr<LiftHeadControlLoop> control_loop;
@@ -26,6 +28,7 @@ int main(int argc, char **argv) {
   int running_state = 2;
   double lift_height = 0;
   auto pub = node->create_publisher<arm_control::msg::PosCmd>("/body_information", 1);
+  auto imu_pub = node->create_publisher<sensor_msgs::msg::Imu>("/arx_imu",1);
   auto sub = node->create_subscription<arm_control::msg::PosCmd>("/ARX_VR_L", 1,
                                                                  [&](const arm_control::msg::PosCmd &msg) {
                                                                    control_loop->setHeight(msg.height / 41.54);
@@ -38,9 +41,9 @@ int main(int argc, char **argv) {
                                                                                                  msg.chz / 2.5,
                                                                                                  msg.mode1);
                                                                    else
-                                                                     control_loop->setChassisCmd(msg.chx / 3,
-                                                                                                 -msg.chy / 3,
-                                                                                                 msg.chz / 3,
+                                                                     control_loop->setChassisCmd(msg.chx / 5,
+                                                                                                 -msg.chy / 5,
+                                                                                                 msg.chz / 5,
                                                                                                  msg.mode1);
 
                                                                  });
@@ -50,7 +53,7 @@ int main(int argc, char **argv) {
     if (duration > 1)
       duration = 0;
     lift_height +=
-        msg.axes[1] * (rclcpp::Clock().now() - last_callback_time).seconds();
+        msg.axes[1] * duration;
     if (lift_height > 0.48)
       lift_height = 0.48;
     else if (lift_height < 0.)
@@ -64,7 +67,7 @@ int main(int argc, char **argv) {
     control_loop->setChassisCmd(msg.axes[4] * 2, msg.axes[3] * 2,
                                 msg.axes[0] * 4, running_state);
   });
-  rclcpp::Rate loop_rate(500);
+  rclcpp::Rate loop_rate(400);
   while (rclcpp::ok()) {
     control_loop->loop();
     arm_control::msg::PosCmd msg;
@@ -73,6 +76,25 @@ int main(int argc, char **argv) {
     msg.height = control_loop->getHeight();
     msg.temp_float_data[0] = control_loop->getWaistPos();
     pub->publish(msg);
+    sensor_msgs::msg::Imu imu_msg;
+    double orientation[3],angular_vel[3],accel[3];
+    control_loop->getOrientation(orientation);
+    control_loop->getAngularVel(angular_vel);
+    control_loop->getAccel(accel);
+    imu_msg.header.stamp = rclcpp::Clock().now();
+    tf2::Quaternion q;
+    q.setRPY(orientation[0],orientation[1],orientation[2]);
+    imu_msg.orientation.x = q.x();
+    imu_msg.orientation.y = q.y();
+    imu_msg.orientation.z = q.z();
+    imu_msg.orientation.w = q.w();
+    imu_msg.linear_acceleration.x = accel[0];
+    imu_msg.linear_acceleration.y = accel[1];
+    imu_msg.linear_acceleration.z = accel[2];
+    imu_msg.angular_velocity.x = angular_vel[0];
+    imu_msg.angular_velocity.y = angular_vel[1];
+    imu_msg.angular_velocity.z = angular_vel[2];
+    imu_pub->publish(imu_msg);
     spin_some(node);
     loop_rate.sleep();
   }
