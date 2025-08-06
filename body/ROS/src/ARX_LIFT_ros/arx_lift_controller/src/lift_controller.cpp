@@ -47,26 +47,26 @@ int main(int argc, char **argv) {
         collect = true;
         control_loop.setHeight(msg->height / 41.54);
         control_loop.setWaistPos(msg->tempFloatData[0]);
-        double yaw, pitch;
-        double left_arm_distance_square =
-            pow(msg->x, 2) + pow(msg->y, 2) + pow(msg->z, 2);
-        double right_arm_distance_square = pow(right_arm_xyz[0], 2) +
-                                           pow(right_arm_xyz[1], 2) +
-                                           pow(right_arm_xyz[2], 2);
-        if (left_arm_distance_square < 0.01 &&
-            right_arm_distance_square < 0.01) {
-          yaw = 0;
-          pitch = 0.3;
-        } else if (left_arm_distance_square > right_arm_distance_square)
-          solveHeadPos(&yaw, &pitch, msg->x + init_pos[0] - 0.07,
-                       msg->y + init_pos[1] + 0.25,
-                       msg->z + init_pos[2] - 0.22);
-        else
-          solveHeadPos(&yaw, &pitch, right_arm_xyz[0] + init_pos[0] - 0.07,
-                       right_arm_xyz[1] + init_pos[1] - 0.25,
-                       right_arm_xyz[2] + init_pos[2] - 0.22);
-        control_loop.setHeadYaw(yaw);
-        control_loop.setHeadPitch(pitch);
+        // double yaw, pitch;
+        // double left_arm_distance_square =
+        //     pow(msg->x, 2) + pow(msg->y, 2) + pow(msg->z, 2);
+        // double right_arm_distance_square = pow(right_arm_xyz[0], 2) +
+        //                                    pow(right_arm_xyz[1], 2) +
+        //                                    pow(right_arm_xyz[2], 2);
+        // if (left_arm_distance_square < 0.01 &&
+        //     right_arm_distance_square < 0.01) {
+        //   yaw = 0;
+        //   pitch = 0.3;
+        // } else if (left_arm_distance_square > right_arm_distance_square)
+        //   solveHeadPos(&yaw, &pitch, msg->x + init_pos[0] - 0.07,
+        //                msg->y + init_pos[1] + 0.25,
+        //                msg->z + init_pos[2] - 0.22);
+        // else
+        //   solveHeadPos(&yaw, &pitch, right_arm_xyz[0] + init_pos[0] - 0.07,
+        //                right_arm_xyz[1] + init_pos[1] - 0.25,
+        //                right_arm_xyz[2] + init_pos[2] - 0.22);
+        // control_loop.setHeadYaw(yaw);
+        // control_loop.setHeadPitch(pitch);
         if (type == 0)
           control_loop.setChassisCmd(msg->chx / 2.5, -msg->chy / 2.5,
                                      msg->chz / 2.5, msg->mode1);
@@ -110,6 +110,8 @@ int main(int argc, char **argv) {
   ros::Time last_pub = ros::Time::now();
   while (ros::ok()) {
     control_loop.loop();
+    control_loop.setHeadYaw(0);
+    control_loop.setHeadPitch(0.3);
     if ((ros::Time::now() - last_cb_time).toSec() > 0.3 && !collect) {
       control_loop.setChassisCmd(0, 0, 0, 2);
       control_loop.setWheelVel(0, 0, 0, 0);
