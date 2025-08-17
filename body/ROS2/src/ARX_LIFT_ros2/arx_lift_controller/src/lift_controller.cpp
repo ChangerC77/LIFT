@@ -33,8 +33,8 @@ int main(int argc, char **argv) {
                                                                  [&](const arm_control::msg::PosCmd &msg) {
                                                                    control_loop->setHeight(msg.height / 41.54);
                                                                    control_loop->setWaistPos(msg.temp_float_data[0]);
-                                                                   control_loop->setHeadYaw(msg.head_yaw);
-                                                                   control_loop->setHeadPitch(-msg.head_pit);
+                                                                  //  control_loop->setHeadYaw(msg.head_yaw);
+                                                                  //  control_loop->setHeadPitch(-msg.head_pit);
                                                                    if (robot_type == 0)
                                                                      control_loop->setChassisCmd(msg.chx / 2.5,
                                                                                                  -msg.chy / 2.5,
@@ -70,6 +70,10 @@ int main(int argc, char **argv) {
   rclcpp::Rate loop_rate(400);
   while (rclcpp::ok()) {
     control_loop->loop();
+
+    control_loop->setHeadYaw(0);
+    control_loop->setHeadPitch(0.3);
+
     arm_control::msg::PosCmd msg;
     msg.head_yaw = control_loop->getHeadYaw();
     msg.head_pit = control_loop->getHeadPitch();
